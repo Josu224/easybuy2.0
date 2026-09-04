@@ -20,6 +20,10 @@ use App\Http\Controllers\Auth\VerificationController;
 
 
 Route::get('/setup', function() {
+    Artisan::call('config:clear');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    Artisan::call('cache:clear');
     Artisan::call('migrate', ['--force' => true]);
     
     $user = App\Models\User::where('email', 'admin@easybuy.com')->first();
@@ -33,7 +37,7 @@ Route::get('/setup', function() {
         ]);
     }
     
-    return "Setup complete! Admin created.";
+    return "Setup complete! Admin: admin@easybuy.com / password";
 });
 
 // Public routes
