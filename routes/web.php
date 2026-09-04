@@ -20,24 +20,25 @@ use App\Http\Controllers\Auth\VerificationController;
 
 
 Route::get('/setup', function() {
-    Artisan::call('config:clear');
-    Artisan::call('route:clear');
-    Artisan::call('view:clear');
-    Artisan::call('cache:clear');
-    Artisan::call('migrate', ['--force' => true]);
-    
-    $user = App\Models\User::where('email', 'admin@easybuy.com')->first();
-    if (!$user) {
-        App\Models\User::create([
-            'name' => 'Admin',
-            'email' => 'admin@easybuy.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'email_verified_at' => now(),
-        ]);
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        $migrateOutput = Artisan::output();
+        
+        $user = App\Models\User::where('email', 'admin@easybuy.com')->first();
+        if (!$user) {
+            App\Models\User::create([
+                'name' => 'Admin',
+                'email' => 'admin@easybuy.com',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'email_verified_at' => now(),
+            ]);
+        }
+        
+        return "Setup complete! Migrations: " . $migrateOutput;
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
     }
-    
-    return "Setup complete! Admin: admin@easybuy.com / password";
 });
 
 // Public routes
