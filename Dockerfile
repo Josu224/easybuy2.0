@@ -21,11 +21,14 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-RUN mkdir -p database && touch database/database.sqlite
+RUN mkdir -p database
+RUN touch database/database.sqlite
+RUN chmod 777 database/database.sqlite
+RUN chmod -R 777 storage bootstrap/cache
 
-RUN chmod -R 777 storage bootstrap/cache database
+RUN php artisan migrate --force
 
-RUN php artisan config:cache
+RUN php artisan tinker --execute="App\Models\User::create(['name' => 'Admin', 'email' => 'admin@easybuy.com', 'password' => Illuminate\Support\Facades\Hash::make('password'), 'role' => 'admin', 'email_verified_at' => now()])"
 
 EXPOSE 8000
 
