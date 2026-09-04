@@ -1,3 +1,4 @@
+# Fresh build - v2
 FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y \
@@ -24,11 +25,12 @@ RUN composer install --no-dev --optimize-autoloader
 RUN mkdir -p database
 RUN touch database/database.sqlite
 RUN chmod 777 database/database.sqlite
-RUN chmod -R 777 storage bootstrap/cache
 
 RUN php artisan migrate --force
 
 RUN php artisan tinker --execute="App\Models\User::create(['name' => 'Admin', 'email' => 'admin@easybuy.com', 'password' => Illuminate\Support\Facades\Hash::make('password'), 'role' => 'admin', 'email_verified_at' => now()])"
+
+RUN chmod -R 777 storage bootstrap/cache
 
 EXPOSE 8000
 
