@@ -21,9 +21,11 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-RUN touch database/database.sqlite
+RUN mkdir -p database && touch database/database.sqlite
 
-RUN chmod -R 777 storage bootstrap/cache database/database.sqlite
+RUN chmod -R 777 storage bootstrap/cache database
+
+RUN php artisan config:cache
 
 EXPOSE 8000
 
