@@ -18,6 +18,24 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 
+
+Route::get('/setup', function() {
+    Artisan::call('migrate', ['--force' => true]);
+    
+    $user = App\Models\User::where('email', 'admin@easybuy.com')->first();
+    if (!$user) {
+        App\Models\User::create([
+            'name' => 'Admin',
+            'email' => 'admin@easybuy.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+            'email_verified_at' => now(),
+        ]);
+    }
+    
+    return "Setup complete! Admin created.";
+});
+
 // Public routes
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/products', [ProductController::class, 'browse'])->name('products.browse');
